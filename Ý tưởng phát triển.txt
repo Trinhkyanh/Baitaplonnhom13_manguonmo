@@ -1,0 +1,11 @@
+- Chức năng 
++ Tạo được giao diện GUI
++ Chức chỉnh ảnh đen trắng
++ Tăng độ sáng ảnh
++ Điều chỉnh được kích thước ảnh
++ Chọn vùng để cắt ảnh
++ Thoát giao diện
+- Mở và lưu đươc file ảnh
+- Bẫy lỗi mở file không phải ảnh
+
+
