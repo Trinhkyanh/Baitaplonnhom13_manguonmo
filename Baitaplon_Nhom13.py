@@ -25,6 +25,7 @@ class ImageEditor:
     def create_menu(self):
         menu_bar = tk.Menu(self.root)
 
+
         file_menu = tk.Menu(menu_bar, tearoff=0)
         file_menu.add_command(label="Mở tài liệu", command=self.open_image)
         file_menu.add_command(label="Lưu tài liệu", command=self.save_image)
@@ -34,7 +35,7 @@ class ImageEditor:
         menu_bar.add_cascade(label="Tài liệu", menu=file_menu)
 
         edit_menu = tk.Menu(menu_bar, tearoff=0)
-        edit_menu.add_command(label="- Điều chỉnh độ sáng ảnh.", command=self.Do_sang)
+        edit_menu.add_command(label="- Điều chỉnh độ sáng ảnh.", command=self.show_brightness_contrast_adjuster)
         edit_menu.add_command(label="- Điều chỉnh làm mịn ảnh.", command=self.Min_anh)
         edit_menu.add_command(label="- Điều chỉnh chuyển sang ảnh đen trắng.", command=self.Anh_denTrang)
         edit_menu.add_command(label="- Cài đặt kích thước ảnh", command=self.ask_for_image_size)
@@ -201,13 +202,33 @@ class ImageEditor:
             file_path = filedialog.asksaveasfilename(defaultextension=".png", filetypes=[("All files", "*.*")])
             if file_path:
                 cv2.imwrite(file_path, self.current_image)
+    def show_brightness_contrast_adjuster(self):
+        adjuster_dialog = tk.Toplevel(self.root)
+        adjuster_dialog.title("Điều chỉnh độ sáng và tương phản")
 
-    def Do_sang(self):
-        alpha = 1.25  # hệ số độ sáng
-        beta = 35     # hệ số tương phản
+        brightness_label = tk.Label(adjuster_dialog, text="Độ sáng:")
+        brightness_entry = tk.Entry(adjuster_dialog)
+        brightness_label.grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
+        brightness_entry.grid(row=0, column=1, padx=5, pady=5)
 
-        self.current_image = cv2.convertScaleAbs(self.original_image, alpha=alpha, beta=beta)
-        self.display_image()
+        contrast_label = tk.Label(adjuster_dialog, text="Tương phản:")
+        contrast_entry = tk.Entry(adjuster_dialog)
+        contrast_label.grid(row=1, column=0, padx=5, pady=5, sticky=tk.W)
+        contrast_entry.grid(row=1, column=1, padx=5, pady=5)
+
+        apply_button = tk.Button(adjuster_dialog, text="Áp dụng", command=lambda: self.apply_brightness_contrast(brightness_entry.get(), contrast_entry.get()))
+        apply_button.grid(row=2, column=0, columnspan=2, pady=10)
+
+    def apply_brightness_contrast(self, brightness_input, contrast_input):
+        try:
+            current_brightness = float(brightness_input)
+            current_contrast = float(contrast_input)
+
+            # Áp dụng điều chỉnh độ sáng và tương phản
+            self.current_image = cv2.convertScaleAbs(self.original_image, alpha=current_brightness, beta=current_contrast)
+            self.display_image()
+        except ValueError:
+            messagebox.showerror("Lỗi", "Vui lòng nhập giá trị hợp lệ cho độ sáng và tương phản.")
 
     def Min_anh(self):
         kernel = np.ones((5, 5), np.float32) / 25  # làm mịn
